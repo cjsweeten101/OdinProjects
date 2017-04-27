@@ -25,7 +25,10 @@
 }
 
 .box {
-	border: 2px solid black;
+	float: left;
+	background-color: #F5F5F6; 
+	padding: none;
+	margin: none;
 }
 
 #container {
