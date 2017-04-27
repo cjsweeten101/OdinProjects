@@ -20,19 +20,18 @@
 
 #header > .header-button {
 	background: #003539;
-	margin: 15px;
-
+	margin: 21px;
 }
 
 .box {
 	float: left;
-	background-color: #F5F5F6; 
+	background-color: #ffffff; 
 	padding: none;
 	margin: none;
 }
 
 #container {
-	background: #F5F5F6;
+	background: #ffffff;
 	margin: auto;
 	border: 2px solid black;
 	width: 720px;

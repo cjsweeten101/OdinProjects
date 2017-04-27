@@ -1,4 +1,8 @@
 var isDown = false;
+var color = '#003539';
+var rColor = false;
+var erase = false;
+var colorDefault = '#003539';
 
 $(document).ready(function() {
 
@@ -9,13 +13,42 @@ $(document).ready(function() {
 	$('#container').on('mousedown', '.box', startDrawing);
 	$('*').mouseup(stopDrawing);
 	$('#container').on('mouseover', '.box', function(){
-		draw($(this), '#003539');
+		if(rColor==true){
+			draw($(this), randomColor);
+		}
+		else{
+			draw($(this), color);
+		}
 	});
 
 	$('#clear').click(clear);
 	$('#scale').click(function() {
 		scaleAlert(container)
 	});
+	$('#random').click(function() {
+		if(rColor == false){
+			rColor = true;
+			erase = false;
+		}
+		else {
+			rColor = false;
+			color = colorDefault;
+		}
+	})
+
+	$('#eraser').click(function() {
+		if(erase == false){
+			erase = true;
+			rColor = false;
+			color = '#ffffff'
+		}
+		else {
+			erase = false;
+			color = '#003539'
+		}
+
+	})
+
 });
 
 function createDivGrid(numRows, container){
@@ -58,4 +91,13 @@ function scaleAlert(container) {
 	} else {
 		alert('Please enter a valid number')
 	}	
+}
+
+function randomColor() {
+	var letters = '0123456789ABCDEF';
+    var newColor = '#';
+    for (var i = 0; i < 6; i++ ) {
+        newColor += letters[Math.floor(Math.random() * 16)];
+    }
+    return newColor;
 }
