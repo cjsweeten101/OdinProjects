@@ -80,7 +80,7 @@ function stopDrawing() {
 }
 
 function clear() {
-	$('.box').css('background', '#F5F5F6');
+	$('.box').css('background', '#ffffff');
 }
 
 function scaleAlert(container) {
