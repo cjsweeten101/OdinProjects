@@ -1,0 +1,37 @@
+* {
+	background: #005f63;
+	font-weight: bold;
+	font-size: 22px;
+	color: #ffffff;
+}
+
+#header{
+	background: #428d90;
+	width: 720px;
+	margin: 15px auto;
+	border: 2px solid black; 
+	height: auto;
+}
+
+#header > .header-element {
+	text-align: center;
+	background: #428d90;
+}
+
+#header > .header-button {
+	background: #003539;
+	margin: 15px;
+
+}
+
+.box {
+	border: 2px solid black;
+}
+
+#container {
+	background: #F5F5F6;
+	margin: auto;
+	border: 2px solid black;
+	width: 720px;
+	height: 720px;
+}
