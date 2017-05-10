@@ -22,26 +22,27 @@ class Game
   	puts "Welcome to Tic Tac Toe #{@player1.name} and #{@player2.name}!"
   	puts "Enter moves as a row, col coordinate => 2,3"
 
+  	winner = ''
+
   	loop do 
-  		begin
+
   		  puts @board.display
   		  make_move(@player1)
+  		  if game_over?(@board)
+  		  	winner = @player1
+  		  	break
+  		  end
+
   		  puts @board.display
   		  make_move(@player2)
+  		  if game_over?(@board)
+  		  	winner = @player2
+  		  	break
+  		  end
 
-  		  puts "#{@player1.name} (#{@player1.char}s), what's your move?"
-  		  move = get_move(@player1)
-  		  @board.update(move[0]-1, move[1]-1, @player1.char)
-  		  puts @board.display
-
-  		  puts "#{@player2.name} (#{@player2.char}s), what's your move?"
-  		  move = get_move(@player2)
-  		  @board.update(move[0]-1, move[1]-1, @player2.char)
-  		rescue StandardError
-  			puts "Please input a valid move"
-  			retry
-  		end
   	end
+  	puts "Game Over! #{winner.name} wins!"
+  	puts @board.display
   end
 
   def get_move(player)
@@ -60,9 +61,17 @@ class Game
   end
 
   def game_over?(board)
+  	board.game_over?
   end
 
   def make_move(player)
-  	
+  	begin
+  	  puts "#{player.name} (#{player.char}s), what's your move?"
+  	  move = get_move(player)
+  	  @board.update(move[0]-1, move[1]-1, player.char)
+  	rescue IOError
+  	  puts "Enter a valid move"
+  	  retry
+  	end
   end
 end
