@@ -26,22 +26,27 @@ class Game
 
   	loop do 
 
-  		  puts @board.display
-  		  make_move(@player1)
-  		  if game_over?(@board)
-  		  	winner = @player1
-  		  	break
-  		  end
+  	  puts @board.display
+  	  make_move(@player1)
+  	  if game_over?(@board) == true
+  	    winner = @player1.name
+  		break
+  	  elsif game_over?(@board) == 0
+  		winner = "nobody"
+  		break
+  	  end
 
-  		  puts @board.display
-  		  make_move(@player2)
-  		  if game_over?(@board)
-  		  	winner = @player2
-  		  	break
-  		  end
-
+  	  puts @board.display
+  	  make_move(@player2)
+  	  if game_over?(@board) == true
+  	    winner = @player2.name
+  		break
+  	  elsif game_over?(@board) == 0
+  		winner = "nobody"
+  		break
+  	  end
   	end
-  	puts "Game Over! #{winner.name} wins!"
+  	puts "Game Over! #{winner} wins!"
   	puts @board.display
   end
 
@@ -61,7 +66,7 @@ class Game
   end
 
   def game_over?(board)
-  	board.game_over?
+    board.game_over?
   end
 
   def make_move(player)

@@ -1,5 +1,5 @@
 class Board
-  LINES = [[1,2,3],[4,5,6],[7,8,9],[1,4,7],[2,5,8],[3,6,9],[1,5,9],[3,5,7]]
+  WINNING_LINES = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
   def initialize
   	create
   end
@@ -25,7 +25,13 @@ class Board
   end
 
   def game_over?
-  	result = full? || three_in_row?
+  	if full?
+  		return 0
+  	elsif three_in_row?
+  		return true
+  	else
+  		return false
+  	end
   end
 
   private
@@ -47,7 +53,20 @@ class Board
   end
 
   def three_in_row?
-  	
+  	flat_board = @board.flatten
+  	x_matches = flat_board.each_index.select {|i| flat_board[i] == 'X'}
+  	o_matches = flat_board.each_index.select {|i| flat_board[i] == 'O'}
+
+  	WINNING_LINES.each do |line|
+  	  if (line - x_matches).empty?
+  		  return true
+
+  	  elsif (line - o_matches).empty?
+  		  return true
+
+  	  end  	
+  	end
+  	return false
   end
 
   def create
