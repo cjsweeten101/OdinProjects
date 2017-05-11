@@ -23,6 +23,7 @@ class MasterMind
   	  code_breaker
   	else
   	  puts "Great! You're the code creator!"
+  	  
   	  code_creator
   	end
   end
@@ -39,27 +40,51 @@ class MasterMind
   end
 
   def code_breaker
+  	puts @computer.code.inspect
   	puts "Try to guess the computer's random code in 12 turns"
   	puts "Codes are entered with a 4 digit combination of numbers 1-6.  ->  2,4,5,6"
 
-  	prompt_code()
+  	turn_count = 0
 
-  end
+  	until turn_count == 12 do
 
-  def prompt_code
-  	input = ''
-  	result = []
-  	until result.all? {|n| n.is_a? Integer} && result.length == 4
-  		print "Guess:"
-  		result = gets.chomp.split(',')
-  		result.map! {|n| n.to_i}
-
-  		exit if input == 'q'
+  	  code = @player.guess
+  	  @board.place_guess(code)
+  	  hint = @computer.check_guess(code)
+  	  @board.place_hint(hint)
+  	  turn_count += 1
+  	  puts @board.state + "Turn: #{turn_count}"
+  	  if hint[:perfect] == 4
+  		puts "Game Over! You won in #{turn_count} turns!"
+  		exit
+  	  end
   	end
-  	result
+  	puts "Game Over! You lost, the code was #{@computer.code}"
   end
 
   def code_creator
+  	puts "Come up with a secret code!"
+  	puts "Codes are entered with a 4 digit combination of numbers 1-6.  ->  2,4,5,6"
+
+  	hint = nil
+  	turn_count = 0
+  	code = @player.guess
+  	until turn_count == 1000 do
+  	  guess = @computer.guess(hint) 
+  	  @board.place_guess(guess)
+
+  	  hint = @player.check_guess(guess)
+  	  @board.place_hint(hint)
+
+  	  turn_count += 1
+  	  if hint[:perfect] == 4
+  		puts @board.state
+  		puts "Game Over! Computer won in #{turn_count} turns!"
+  		exit
+  	  end
+  	end
+  	puts @board.state
+  	puts "Computer Didn't guess it!"
   end
 
 end
