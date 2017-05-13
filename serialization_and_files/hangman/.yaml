@@ -1,0 +1,14 @@
+--- !ruby/object:Hangman
+dictionary: ''
+word: myasthenic
+hint: myasthen--
+correct:
+- m
+- y
+- s
+- a
+- n
+- t
+- h
+- e
+incorrect: []

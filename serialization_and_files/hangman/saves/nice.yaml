@@ -1,0 +1,12 @@
+--- !ruby/object:Hangman
+dictionary: ''
+word: londonderry
+hint: lon-on----y
+correct:
+- l
+- o
+- n
+- y
+incorrect:
+- a
+- z
