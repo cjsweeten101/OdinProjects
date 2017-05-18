@@ -6,7 +6,6 @@ def merge_sort(arr)
 end
 
 def merge(arr1, arr2)
-  puts "#{arr1} + #{arr2}"
   result = []
   	until arr2.length < 1 || arr1.length < 1 do
   	  if arr1.first < arr2.first
