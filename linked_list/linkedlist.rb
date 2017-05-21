@@ -40,6 +40,7 @@ class LinkedList
   end
 
   def at index
+  	return nil if !(0..size).include? index
   	return @head if index == 0
   	count = 0
   	current = @head
@@ -93,13 +94,25 @@ class LinkedList
   		nil
   	end
   end
+
+  def insert_at node, index
+  	return nil if !(1..size).include? index
+  	prev_node = at(index - 1)
+  	node.next_node = prev_node.next_node
+  	prev_node.next_node = node
+  end
+
+  def remove_at index
+  	return nil if !(0..size).include? index
+  	prev_node = at(index - 1)
+  	next_node = at(index + 1)
+  	if at(index) == @head
+  		@head = next_node
+  	elsif at(index) == @tail
+  		@tail = prev_node
+  		@tail.next_node = nil
+  	else
+  		prev_node.next_node = next_node
+  	end
+  end
 end
-
-testy = LinkedList.new()
-testy.append(Node.new(1))
-testy.append(Node.new(2))
-testy.append(Node.new(3))
-
-puts testy.size
-puts testy.to_s
-
