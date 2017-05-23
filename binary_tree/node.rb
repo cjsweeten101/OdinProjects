@@ -1,7 +1,10 @@
-class node
-  attr_accessor :value, :parent, :children
+class Node
+  attr_accessor :value, :parent, :left, :right
 
-  def build_tree arr
-      	
+  def initialize value
+  	@value = value
+  	@parent = nil
+  	@left = nil
+  	@right = nil
   end
 end
