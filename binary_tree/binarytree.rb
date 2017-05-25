@@ -2,6 +2,7 @@ class BinaryTree
   require_relative 'node'
 
   def initialize arr
+    @dfs_rec_result = nil
   	@root = nil
   	build_tree_unsorted(arr)
   end
@@ -55,17 +56,44 @@ class BinaryTree
     get_root(node.parent)
   end
   #Depth-First-Traversal technically. . .
-  def format tree
+  def format_sorted tree
   	return if tree.nil?
-  	puts tree.value
-  	format tree.left
-  	format tree.right
+  	format_sorted tree.left
+    puts tree.value
+  	format_sorted tree.right
   end
 
-  def to_s 
-  	format @root
+  def display_sorted 
+  	format_sorted @root
+  end
+
+  def breadth_first_search(target)
+    queue = []
+    node = @root
+    loop do
+      return node if node.value == target 
+      queue << node.left if !node.left.nil?
+      queue << node.right if !node.right.nil?
+      queue.length == 0 ?  (break) : node = queue.shift
+    end
+    0
+  end
+
+  def depth_first_search(target)
+    stack = []
+    stack << @root
+    while stack.length > 0
+      node = stack.pop
+      return node if node.value == target
+      stack << node.left if !node.left.nil?
+      stack << node.right if !node.right.nil?
+    end
+  end
+
+  def dfs_rec(target, node=@root)
+    return node if node.value == target
+    left = dfs_rec(target, node.left) if node.left
+    right = dfs_rec(target, node.right) if node.right
+    left or right
   end
 end
-
-tree = BinaryTree.new([1, 11, 4, 23, 8, 9, 10, 3, 5, 7, 2, 67, 6345, 324])
-tree.to_s
