@@ -34,3 +34,5 @@ def shift letter, shift
 	end
 	new_letter
 end
+
+puts cipher("A",1)
