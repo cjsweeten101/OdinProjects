@@ -34,5 +34,3 @@ def shift letter, shift
 	end
 	new_letter
 end
-
-puts cipher("I aM a StRiNgZ!", 10)
