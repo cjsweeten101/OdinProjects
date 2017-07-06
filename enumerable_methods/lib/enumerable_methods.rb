@@ -46,7 +46,7 @@ module Enumerable
         result = true if (yield v)
       end
     else
-      self.my_each do |v|
+        self.my_each do |v|
         result = true if v
       end
     end
