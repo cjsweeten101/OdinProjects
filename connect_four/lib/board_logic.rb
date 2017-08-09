@@ -30,36 +30,44 @@ class Board
   end
 
   def four_in_row?
-    cols_count = 0
-    diag_count = 0 
-    rows_count = 0
+    rows? || columns? || rows?
+  end
 
+  def columns?
+    count = 0
     @status.each_with_index do |row, i|
-      rows_count = 0
-      current_char = ''
-      next_char = ''
-
       row.each_with_index do |col, j|
-        if !col.nil?
-          current_char = col
-          next_row_char = @status[i][j + 1]
-
-          if i < @status.length - 1
-            next_col_char = @status[i + 1][j]
-          else
-            next_col_char = nil
+        if !col.nil? && i < 4 
+          current_item = col
+          next_item = @status[i + 1][j]
+          count = 0
+          while current_item == next_item && (count + 1 + i) < @status.length - 1 do 
+            count += 1
+            next_item = @status[i + 1 + count][j]
           end
-
-          rows_count += 1 if next_row_char == current_char
-          cols_count +=1 if next_col_char == current_char
         end
       end
     end
+    count == 2 ? (return true) : (return false)
+  end
 
-    if cols_count == 3 || rows_count == 3 || diag_count == 3
-      return true
-    else
-      return false
+  def rows?
+    count = 0 
+    @status.each_with_index do |row, i|
+      count = 0
+
+      row.each_with_index do |col, j|      
+        if !col.nil?
+          current_item = col
+          next_item = @status[i][j + 1] 
+          count += 1 if current_item == next_item 
+        end
+      end
     end
+    count == 3 ? (return true) : (return false)
+  end
+
+  def diagonals
+
   end
 end
