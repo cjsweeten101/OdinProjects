@@ -34,7 +34,6 @@ describe "The connect four game board" do
 			4.times do 
 				board.place('X', 1)
 			end
-			puts board.show
 			expect(board.four_in_row?).to eq(true)
 		end
 
@@ -45,7 +44,7 @@ describe "The connect four game board" do
 			end
 			expect(board.four_in_row?).to eq(true)
 		end
-=begin
+		
 		it "checks for four in a row on diagonals" do 
 			3.times do |i|
 				board.place('O', 1)
@@ -62,13 +61,22 @@ describe "The connect four game board" do
 			board.place('X', 3)
 			board.place('X', 4)
 
-			puts board.show
-
 			expect(board.four_in_row?).to eq(true)
 		end
-=end
 	end
+
 	describe "#full?" do 
-		it "checks if the whole board is full, resulting in a tie"
+		before do 
+			board.status = ['O','O','O','X','X','X'],
+										 ['X','X','X','O','O','O'],
+										 ['O','O','O','X','X','X'],
+										 ['X','X','X','O','O','O'],
+										 ['O','O','O','X','X','X'],
+										 ['X','X','X','O','O','O'],
+										 ['O','O','O','X','X','X'] 
+		end
+		it "checks if the whole board is full, resulting in a tie" do 
+			expect(board.full?).to eq(true)
+		end
 	end
 end
