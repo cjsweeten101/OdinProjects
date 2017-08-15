@@ -20,4 +20,12 @@ describe "The game board" do
 			expect(@board.format).to be_a(String)
 		end
 	end 
+
+	describe "#move" do 
+		it "moves a piece to an empty space on the board" 
+
+		it "returns an error if a piece cannot make that move"
+
+		it "captures enemy pieces"
+
 end
