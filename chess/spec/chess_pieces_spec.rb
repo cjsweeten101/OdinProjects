@@ -14,6 +14,9 @@ describe "A Chess piece" do
 			@knight = Knight.new
 		end
 
+		it "has a black default color" do 
+			expect(@knight.color).to eq('b')
+		end
 		it "can move in an 'L' shape" do 
 			expect(@knight.moveset).to include([2,1])
 		end
