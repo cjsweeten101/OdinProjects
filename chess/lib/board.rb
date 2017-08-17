@@ -6,7 +6,7 @@ class Board
 	def initialize
 		@state = Array.new(8){Array.new(8)}
 		@pieces_hash = create_pieces_hash
-		@state = update_state(@pieces_hash, @state) 
+		@state = update_state(@pieces_hash) 
 	end
 
 	def format
@@ -62,18 +62,20 @@ class Board
 		new_hash.merge(pieces_hash)
 	end
 
-	def update_state piece_hash, current_state
+	def update_state piece_hash
+		new_state = Array.new(8){Array.new(8)}
 		piece_hash.each do |piece, pos|
-			current_state[pos[0]][pos[1]] = piece
+			new_state[pos[0]][pos[1]] = piece
 		end
-		current_state
+		new_state
 	end
 
 	def move player_color, initial_coord, ending_coord
 		moving_piece = get_piece(initial_coord)
 		if legal_move?(player_color, moving_piece, initial_coord, ending_coord)
+			@pieces_hash.delete(@pieces_hash.key(ending_coord)) 
 			@pieces_hash[moving_piece] = ending_coord
-			@state = update_state(@pieces_hash, @state)
+			@state = update_state(@pieces_hash)
 			return true
 		else
 			return false
@@ -89,20 +91,20 @@ class Board
 		if moving_piece.nil? || moving_piece.color !=  player_color || ending_coord[0] > @state.length - 1 || ending_coord[1] > @state.length - 1 || !moving_piece.moveset.include?(move)
 			return false
 		elsif !moving_piece.is_a? Knight
-			return not_blocked?(player_color, initial_coord, ending_coord, move)
+			return clear_path?(player_color, initial_coord, ending_coord, move)
 		else
 			return true		 	 
 		end
 	end
 
-	def not_blocked? (player_color, initial_coord, ending_coord, move)
+	def clear_path? (player_color, initial_coord, ending_coord, move)
 		move_slice = slice_2d(@state, initial_coord, ending_coord)
-		move_slice.each_with_index do |space, idx|
-			if (!space.nil?) && idx != 0
+		move_slice[0..-2].each_with_index do |space, idx|
+			if !space.nil? && idx != 0
 				return false
 			end
 		end
-		true
+		return true
 	end
 
 	def slice_2d(arr, initial_coord, ending_coord)
@@ -111,11 +113,14 @@ class Board
 		col_tracker = 0
 		row_slice = @state[initial_coord[0]..ending_coord[0]]
 		row_slice.each_with_index do |row, idx|
+			next_loop = false
 			row.each_with_index do |space, idx|
-				if idx == col_indexes[col_tracker]
+				if idx == col_indexes[col_tracker] && !next_loop
 					result << space
-					col_tracker += 1  
+					col_tracker += 1
+					next_loop = true  
 				end
+				next if next_loop
 			end
 		end
 		result
