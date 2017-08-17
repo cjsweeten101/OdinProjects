@@ -72,7 +72,15 @@ class Board
 
 	def move player_color, initial_coord, ending_coord
 		moving_piece = get_piece(initial_coord)
-		if legal_move?(player_color, moving_piece, initial_coord, ending_coord)
+		if moving_piece.is_a?(Pawn) && initial_coord.zip(ending_coord).map{ |x, y| y - x }.none?{ |v| v==0 }
+			if @pieces_hash[ending_coord].color != player_color
+				@pieces_hash.delete(@pieces_hash.key(ending_coord)) 
+				@pieces_hash[moving_piece] = ending_coord
+				@state = update_state(@pieces_hash)
+				return true
+			end
+			
+		elsif legal_move?(player_color, moving_piece, initial_coord, ending_coord)
 			@pieces_hash.delete(@pieces_hash.key(ending_coord)) 
 			@pieces_hash[moving_piece] = ending_coord
 			@state = update_state(@pieces_hash)
