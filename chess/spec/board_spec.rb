@@ -24,7 +24,7 @@ describe "The game board" do
 	describe "#move" do
 
 		before do 
-			@board.move('b', [1,1], [2,1])	
+			@board.move('b', [1,1], [2,1])
 		end 
 
 		it "moves a piece to an empty space on the board"  do
@@ -36,6 +36,12 @@ describe "The game board" do
 			expect(@board.move('b', [0,3], [2,5])).to eq(false)
 		end
 
-		it "captures enemy pieces"
+		before do 
+			@board.move('b', [0,2], [2,0])
+			@board.move('b', [2,0], [6,4])
+		end
+		it "captures enemy pieces" do 
+			expect(@board.state[6][4]).to be_a(Bishop)
+		end
 	end
 end
