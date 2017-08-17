@@ -68,4 +68,56 @@ class Board
 		end
 		current_state
 	end
+
+	def move player_color, initial_coord, ending_coord
+		moving_piece = get_piece(initial_coord)
+		if legal_move?(player_color, moving_piece, initial_coord, ending_coord)
+			@pieces_hash[moving_piece] = ending_coord
+			@state = update_state(@pieces_hash, @state)
+			return true
+		else
+			return false
+		end
+	end
+
+	def get_piece coord 
+		@pieces_hash.key(coord)
+	end
+
+	def legal_move? (player_color, moving_piece, initial_coord, ending_coord)
+		move = initial_coord.zip(ending_coord).map { |x, y| y - x }
+		if moving_piece.nil? || moving_piece.color !=  player_color || ending_coord[0] > @state.length - 1 || ending_coord[1] > @state.length - 1 || !moving_piece.moveset.include?(move)
+			return false
+		elsif !moving_piece.is_a? Knight
+			return not_blocked?(player_color, initial_coord, ending_coord, move)
+		else
+			return true		 	 
+		end
+	end
+
+	def not_blocked? (player_color, initial_coord, ending_coord, move)
+		move_slice = slice_2d(@state, initial_coord, ending_coord)
+		move_slice.each_with_index do |space, idx|
+			if (!space.nil?) && idx != 0
+				return false
+			end
+		end
+		true
+	end
+
+	def slice_2d(arr, initial_coord, ending_coord)
+		result = []
+		col_indexes = (initial_coord[1]..ending_coord[1]).to_a 
+		col_tracker = 0
+		row_slice = @state[initial_coord[0]..ending_coord[0]]
+		row_slice.each_with_index do |row, idx|
+			row.each_with_index do |space, idx|
+				if idx == col_indexes[col_tracker]
+					result << space
+					col_tracker += 1  
+				end
+			end
+		end
+		result
+	end
 end

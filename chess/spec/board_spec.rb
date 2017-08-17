@@ -21,11 +21,21 @@ describe "The game board" do
 		end
 	end 
 
-	describe "#move" do 
-		it "moves a piece to an empty space on the board" 
+	describe "#move" do
 
-		it "returns an error if a piece cannot make that move"
+		before do 
+			@board.move('b', [1,1], [2,1])	
+		end 
+
+		it "moves a piece to an empty space on the board"  do
+			expect(@board.state[2][1]).to be_a(Pawn)
+		end
+
+		it "returns false if a piece cannot make that move" do 
+			expect(@board.move('b', [1,1], [1,6])).to eq(false)
+			expect(@board.move('b', [0,3], [2,5])).to eq(false)
+		end
 
 		it "captures enemy pieces"
-
+	end
 end
