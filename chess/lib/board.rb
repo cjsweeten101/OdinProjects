@@ -104,7 +104,7 @@ class Board
 		move_slice = slice_2d(@state, initial_coord, ending_coord)
 		move_slice.each_with_index do |space, idx|
 			if !space.nil? && idx != 0
-				return false if space.color == player_color
+				return false if space.color == player_color || idx != move_slice.length-1
 			end
 		end
 		return true
@@ -153,5 +153,6 @@ class Board
       return true
 		else
 			return false
+    end
 	end
 end
