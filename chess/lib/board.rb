@@ -72,13 +72,9 @@ class Board
 
 	def move player_color, initial_coord, ending_coord
 		moving_piece = get_piece(initial_coord)
-		if moving_piece.is_a?(Pawn) && initial_coord.zip(ending_coord).map{ |x, y| y - x }.none?{ |v| v==0 }
-			if @pieces_hash[ending_coord].color != player_color
-				@pieces_hash.delete(@pieces_hash.key(ending_coord)) 
-				@pieces_hash[moving_piece] = ending_coord
-				@state = update_state(@pieces_hash)
-				return true
-			end
+		if moving_piece.is_a?(Pawn) 
+			return move_pawn(moving_piece, initial_coord, ending_coord)
+		end
 			
 		elsif legal_move?(player_color, moving_piece, initial_coord, ending_coord)
 			@pieces_hash.delete(@pieces_hash.key(ending_coord)) 
@@ -107,9 +103,9 @@ class Board
 
 	def clear_path? (player_color, initial_coord, ending_coord, move)
 		move_slice = slice_2d(@state, initial_coord, ending_coord)
-		move_slice[0..-2].each_with_index do |space, idx|
+		move_slice.each_with_index do |space, idx|
 			if !space.nil? && idx != 0
-				return false
+				return false if space.color == player_color
 			end
 		end
 		return true
@@ -121,16 +117,28 @@ class Board
 		col_tracker = 0
 		row_slice = @state[initial_coord[0]..ending_coord[0]]
 		row_slice.each_with_index do |row, idx|
-			next_loop = false
+			found_in_row = false
 			row.each_with_index do |space, idx|
-				if idx == col_indexes[col_tracker] && !next_loop
+				if idx == col_indexes[col_tracker] && !found_in_row
 					result << space
-					col_tracker += 1
-					next_loop = true  
+					col_tracker += 1 if col_indexes.length > 1
+					found_in_row = true  
 				end
-				next if next_loop
+				next if found_in_row
 			end
 		end
 		result
+	end
+
+	def checkmate?
+		false
+	end
+
+	def check?
+		false
+	end
+
+	def move_pawn(pawn, initial_coord, ending_coord)
+		
 	end
 end
