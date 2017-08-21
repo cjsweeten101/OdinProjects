@@ -14,14 +14,35 @@ class Knight < Piece
 end 
 
 class Pawn < Piece
+  attr_accessor :first_move
+  
 	def initialize color='b'
+		@first_move = true
 		@color = color
 		colorfy
-		@color == 'b' ? @moveset = [[1,0],[1,1],[1,-1]] : @moveset = [[-1,0],[-1,1][-1,-1]]
+		#@color == 'b' ? @moveset = [[1,0],[1,1],[1,-1]] : @moveset = [[-1,0],[-1,1][-1,-1]]
 	end
 
 	def colorfy
 		@color == 'b' ? @symbol = "\u265F" : @symbol = "\u2659"
+	end
+
+	def moveset
+    moveset = []
+    if color=='b'
+      if @first_move
+        moveset = [[1,0],[1,1],[1,-1],[2,0]]
+      else
+        moveset = [[1,0],[1,1],[1,-1]]
+      end
+    else
+      if @first_move
+        moveset = [[-1,0],[-1,1],[-1,-1],[-2,0]]
+      else
+        moveset = [[-1,0],[-1,1][-1,-1]]
+      end
+    end
+    moveset
 	end
 end
 

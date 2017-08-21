@@ -140,16 +140,20 @@ class Board
 	def move_pawn(pawn, initial_coord, ending_coord)
 		move = initial_coord.zip(ending_coord).map { |x, y| y - x }
 		can_move = false
-		if move.include?(0)
-			@pieces_hash.key(ending_coord).nil? ? can_move  = true : can_move = false
-		else
-			@pieces_hash.key(ending_coord).nil? ? can_move = false : can_move = true
-		end
-
+    if pawn.moveset.include?(move)
+		  if move.include?(0)
+        @pieces_hash.key(ending_coord).nil? ? can_move  = true : can_move = false
+		  else
+			  @pieces_hash.key(ending_coord).nil? ? can_move = false : can_move = true
+		  end
+    else
+      return false
+    end
 		if can_move
       @pieces_hash.delete(@pieces_hash.key(ending_coord)) if !@pieces_hash.key(ending_coord).nil? 
       @pieces_hash[pawn] = ending_coord
       @state = update_state(@pieces_hash)
+      pawn.first_move = false
       return true
 		else
 			return false
