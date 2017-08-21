@@ -74,8 +74,7 @@ class Board
 		moving_piece = get_piece(initial_coord)
 		if moving_piece.is_a?(Pawn) 
 			return move_pawn(moving_piece, initial_coord, ending_coord)
-		end
-			
+
 		elsif legal_move?(player_color, moving_piece, initial_coord, ending_coord)
 			@pieces_hash.delete(@pieces_hash.key(ending_coord)) 
 			@pieces_hash[moving_piece] = ending_coord
@@ -135,10 +134,24 @@ class Board
 	end
 
 	def check?
-		false
+		false 
 	end
 
 	def move_pawn(pawn, initial_coord, ending_coord)
-		
+		move = initial_coord.zip(ending_coord).map { |x, y| y - x }
+		can_move = false
+		if move.include?(0)
+			@pieces_hash.key(ending_coord).nil? ? can_move  = true : can_move = false
+		else
+			@pieces_hash.key(ending_coord).nil? ? can_move = false : can_move = true
+		end
+
+		if can_move
+      @pieces_hash.delete(@pieces_hash.key(ending_coord)) if !@pieces_hash.key(ending_coord).nil? 
+      @pieces_hash[pawn] = ending_coord
+      @state = update_state(@pieces_hash)
+      return true
+		else
+			return false
 	end
 end
