@@ -33,7 +33,7 @@ describe "The game board" do
 
 		it "returns false if a piece cannot make that move" do 
 			expect(@board.move('b', [1,1], [1,6])).to eq(false)
-			expect(@board.move('b', [0,3], [2,5])).to eq(false)
+			expect(@board.move('b', [0,3], [1,3])).to eq(false)
 		end
 
 		before do 
