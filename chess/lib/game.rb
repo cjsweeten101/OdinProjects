@@ -51,8 +51,18 @@ class Game
 					result = result.scan(/\b[1-8]{1}\b/)
 				end
 			end
-			placed = place_move(result, player_color)
+			placed, ending_coord = place_move(result, player_color)
+			upgrade_pawn(ending_coord) if @board.pawn_upgrade? 	
 		end 
+	end
+
+	def upgrade_pawn(coord)
+		puts "Upgrade to a Q, R, B, K?"
+		result = ''
+		until result =~ /[q|r|b|k]/ do 
+			result = gets.chomp.downcase
+		end
+		@board.upgrade_pawn(coord, result)
 	end
 
 	def save_game
@@ -86,7 +96,6 @@ class Game
 
 	def game_loop
 		puts "Welcome! Type quit to quit and save to save current game"
-		current_player = @board.player
 		until @board.checkmate?(@board.player) do
 				if @board.stalemate?
 					puts "Stalemate, only kings left"
@@ -95,7 +104,7 @@ class Game
 				puts @board.format
 				puts "Check!" if @board.check?(@board.player)
 				puts "its #{@board.player}'s turn"
-				move = prompt_move(current_player)
+				prompt_move(@board.player)
 				@board.player == 'b' ? @board.player = 'w' : @board.player = 'b'
 
 		end
@@ -105,6 +114,6 @@ class Game
 	def place_move move, player_color
 		ending_coord = move[2..4].map {|v| v.to_i-1}
 		starting_coord = move[0..1].map {|v| v.to_i-1}
-		@board.move(player_color, starting_coord, ending_coord)
+		return @board.move(player_color, starting_coord, ending_coord), ending_coord
 	end
 end

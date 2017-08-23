@@ -111,8 +111,30 @@ class Board
 
 	end
 
-	def pawn_upgrade
+	def pawn_upgrade?
+		pawns_hash = @pieces_hash.select{|k,v| k.is_a?(Pawn)}
+		pawns_hash.each do |p,v|
+			if v[0] == 0 || v[0] == 7
+				return true
+			end
+		end
+		return false
+	end
 
+	def upgrade_pawn(coord, choice)
+		pawn = get_piece(coord)
+		@pieces_hash.delete(pawn)
+		case choice
+			when 'b'
+				@pieces_hash[Bishop.new] = coord
+			when 'r'
+				@pieces_hash[Rook.new] = coord
+			when 'q'
+				@pieces_hash[Queen.new] = coord
+			when 'k'
+				@pieces_hash[Knight.new] = coord
+		end
+		@state = update_state(@pieces_hash)
 	end
 
 	def stalemate?
