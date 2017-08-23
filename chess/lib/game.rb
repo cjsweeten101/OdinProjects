@@ -13,16 +13,15 @@ class Game
 	end
 	def game_loop
 		current_player = 'b'
-		until @board.checkmate? do
-			if @board.check?
-
-			else
+		until @board.checkmate?(current_player) do
 				puts @board.format
+				puts "Check!" if @board.check?(current_player)
 				puts "its #{current_player}'s turn"
 				move = prompt_move(current_player)
 				current_player == 'b' ? current_player = 'w' : current_player = 'b'
-			end
+
 		end
+		puts "checkmate!"
 	end
 
 	def prompt_move player_color

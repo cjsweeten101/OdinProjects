@@ -77,6 +77,9 @@ class Rook < Piece
 end
 
 class King < Piece
+
+	attr_reader :moveset
+	
 	def initialize color='b'
 		@color = color
 		colorfy

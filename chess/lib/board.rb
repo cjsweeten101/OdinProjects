@@ -14,7 +14,6 @@ class Board
 		@state.each do |row|
 			result += "\n"
 			row.each do |piece|
-				#Dependency on 'piece' responding to 'symbol'
 				piece.nil? ? result += "| |" : result += "|#{piece.symbol}|"
 			end
 		end
@@ -55,7 +54,7 @@ class Board
 				new_hash[Bishop.new(color)] = [row, 5]
 				new_hash[Queen.new(color)] = [row, 3]
 				new_hash[King.new(color)] = [row, 4]
-			
+		
 			color = 'w'
 			row = 7
 		end
@@ -71,18 +70,35 @@ class Board
 	end
 
 	def move player_color, initial_coord, ending_coord
+		board_before_move = @state
+		hash_before_move = @pieces_hash
 		moving_piece = get_piece(initial_coord)
+		result = false
 		if moving_piece.is_a?(Pawn) 
-			return move_pawn(moving_piece, initial_coord, ending_coord)
+			if can_pawn_move?(moving_piece, initial_coord, ending_coord)
+				@pieces_hash.delete(@pieces_hash.key(ending_coord)) if !@pieces_hash.key(ending_coord).nil? 
+      	@pieces_hash[moving_piece] = ending_coord
+      	@state = update_state(@pieces_hash)
+      	moving_piece.first_move = false
+      	result = true
+      else 
+      	result = false
+    	end
 
 		elsif legal_move?(player_color, moving_piece, initial_coord, ending_coord)
 			@pieces_hash.delete(@pieces_hash.key(ending_coord)) 
 			@pieces_hash[moving_piece] = ending_coord
 			@state = update_state(@pieces_hash)
-			return true
+			result = true
 		else
-			return false
+			result = false
 		end
+		if check?(player_color)
+			@state = board_before_move
+			@pieces_hash = hash_before_move
+			result = false
+		end
+		result
 	end
 
 	def get_piece coord 
@@ -91,7 +107,7 @@ class Board
 
 	def legal_move? (player_color, moving_piece, initial_coord, ending_coord)
 		move = initial_coord.zip(ending_coord).map { |x, y| y - x }
-		if moving_piece.nil? || moving_piece.color !=  player_color || ending_coord[0] > @state.length - 1 || ending_coord[1] > @state.length - 1 || !moving_piece.moveset.include?(move)
+		if moving_piece.nil? || moving_piece.color !=  player_color || ending_coord[0] > @state.length - 1 || ending_coord[1] > @state.length - 1 || !moving_piece.moveset.include?(move) || ending_coord[0] < 0 || ending_coord[1] < 0
 			return false
 		elsif !moving_piece.is_a? Knight
 			return clear_path?(player_color, initial_coord, ending_coord, move)
@@ -112,32 +128,59 @@ class Board
 
 	def slice_2d(arr, initial_coord, ending_coord)
 		result = []
-		col_indexes = (initial_coord[1]..ending_coord[1]).to_a 
-		col_tracker = 0
-		row_slice = @state[initial_coord[0]..ending_coord[0]]
-		row_slice.each_with_index do |row, idx|
-			found_in_row = false
-			row.each_with_index do |space, idx|
-				if idx == col_indexes[col_tracker] && !found_in_row
-					result << space
-					col_tracker += 1 if col_indexes.length > 1
-					found_in_row = true  
-				end
-				next if found_in_row
+		move = initial_coord.zip(ending_coord).map { |x, y| y - x }
+		if move[0] == 0
+			indexes = (initial_coord[1]..ending_coord[1]).to_a
+			indexes = (initial_coord[1].downto(ending_coord[1])).to_a if indexes.length == 0
+			indexes.each do |idx|
+				result << @pieces_hash.key([ending_coord[0],idx])
+			end
+		elsif move[1] == 0
+			indexes = (initial_coord[0]..ending_coord[0]).to_a
+			indexes = (initial_coord[0].downto(ending_coord[0])).to_a if indexes.length == 0
+			indexes.each do |idx|
+				result << @pieces_hash.key([idx,ending_coord[1]])
+			end
+		else
+			row_indexes = (initial_coord[0]..ending_coord[0]).to_a
+			row_indexes = (initial_coord[0].downto(ending_coord[0])).to_a if row_indexes.length == 0
+
+			col_indexes = (initial_coord[1]..ending_coord[1]).to_a
+			col_indexes = (initial_coord[1].downto(ending_coord[1])).to_a if col_indexes.length == 0
+
+			indexes = row_indexes.zip(col_indexes)
+			indexes.each do |coord|
+				result << @pieces_hash.key(coord)
 			end
 		end
-		result
+		result			
 	end
 
-	def checkmate?
+	def checkmate? player_color
+		if check? player_color
+			result = true
+			king = @pieces_hash.keys.select{ |k| k.is_a?(King) && k.color == player_color }[0]
+			kings_coord = @pieces_hash[king]
+			king.moveset.each do |i,j|
+				ending_coord = [kings_coord[0]+i, kings_coord[1]+j]
+				result = false if legal_move?(player_color, king, kings_coord, ending_coord)
+			end 
+			return result
+		end
 		false
 	end
 
-	def check?
-		false 
+	def check? player_color
+		result = false
+		king_coord = @pieces_hash.select{ |k,v| k.is_a?(King) && k.color == player_color }.first[1]
+		enemy_pieces = @pieces_hash.select{ |k,v| k.color != player_color }
+		enemy_pieces.each do |k,v|
+			result = true if piece_can_traverse?(k, king_coord)
+		end 
+		result
 	end
 
-	def move_pawn(pawn, initial_coord, ending_coord)
+	def can_pawn_move?(pawn, initial_coord, ending_coord)
 		move = initial_coord.zip(ending_coord).map { |x, y| y - x }
 		can_move = false
     if pawn.moveset.include?(move)
@@ -146,17 +189,15 @@ class Board
 		  else
 			  @pieces_hash.key(ending_coord).nil? ? can_move = false : can_move = true
 		  end
-    else
-      return false
-    end
-		if can_move
-      @pieces_hash.delete(@pieces_hash.key(ending_coord)) if !@pieces_hash.key(ending_coord).nil? 
-      @pieces_hash[pawn] = ending_coord
-      @state = update_state(@pieces_hash)
-      pawn.first_move = false
-      return true
-		else
-			return false
-    end
+		end
+		can_move ? (return true) : (return false)
+	end
+
+	def piece_can_traverse?(piece, ending_coord)
+		result = false
+		if piece.is_a?(Pawn)
+			return can_pawn_move?(piece, @pieces_hash[piece], ending_coord)
+		end
+		legal_move?(piece.color, piece, @pieces_hash[piece], ending_coord)
 	end
 end

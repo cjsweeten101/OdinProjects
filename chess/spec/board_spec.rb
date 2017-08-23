@@ -44,4 +44,16 @@ describe "The game board" do
 			expect(@board.state[6][4]).to be_a(Bishop)
 		end
 	end
+
+	describe "#checkmate" do
+		before do
+			@board.move('b', [0,1], [2,2])
+			@board.move('b', [2,2], [4,3])
+			@board.move('b', [4,3], [5,5])
+		end
+
+		it "returns true if checkmate. . ." do 
+			expect(@board.checkmate?('w')).to eq(true)
+		end
+	end
 end
