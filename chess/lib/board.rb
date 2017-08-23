@@ -2,11 +2,13 @@ require_relative "chess_pieces.rb"
 
 class Board
 	attr_reader :state
+	attr_accessor :player
 
 	def initialize
 		@state = Array.new(8){Array.new(8)}
 		@pieces_hash = create_pieces_hash
 		@state = update_state(@pieces_hash) 
+		@player ='b'
 	end
 
 	def format
