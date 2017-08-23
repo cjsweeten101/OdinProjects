@@ -88,6 +88,10 @@ class Game
 		puts "Welcome! Type quit to quit and save to save current game"
 		current_player = @board.player
 		until @board.checkmate?(@board.player) do
+				if @board.stalemate?
+					puts "Stalemate, only kings left"
+					exit
+				end
 				puts @board.format
 				puts "Check!" if @board.check?(@board.player)
 				puts "its #{@board.player}'s turn"

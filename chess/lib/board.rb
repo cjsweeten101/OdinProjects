@@ -107,6 +107,22 @@ class Board
 		@pieces_hash.key(coord)
 	end
 
+	def castle
+
+	end
+
+	def pawn_upgrade
+
+	end
+
+	def stalemate?
+		result = true
+		@pieces_hash.each do |k,v|
+			result = false if !k.is_a?(King) 
+		end 
+		result
+	end
+
 	def legal_move? (player_color, moving_piece, initial_coord, ending_coord)
 		move = initial_coord.zip(ending_coord).map { |x, y| y - x }
 		if moving_piece.nil? || moving_piece.color !=  player_color || ending_coord[0] > @state.length - 1 || ending_coord[1] > @state.length - 1 || !moving_piece.moveset.include?(move) || ending_coord[0] < 0 || ending_coord[1] < 0
