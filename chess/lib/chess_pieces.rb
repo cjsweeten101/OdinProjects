@@ -63,6 +63,7 @@ end
 
 class Rook < Piece
 	def initialize color='b'
+		@moved = false
 		@color = color
 		colorfy
 		@moveset = [[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],
@@ -77,10 +78,9 @@ class Rook < Piece
 end
 
 class King < Piece
-
-	attr_reader :moveset
 	
 	def initialize color='b'
+		@moved = false
 		@color = color
 		colorfy
 		@moveset = [[1,0],[1,1],[0,1],[-1,1],[0,-1],[-1,-1],[-1,0],[1,-1]]

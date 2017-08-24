@@ -63,4 +63,18 @@ describe "The game board" do
 			expect(@board.checkmate?('w')).to eq(true)
 		end
 	end
+
+	describe "#castle" do 
+
+		before do 
+			@board.move_anywhere([7,1],[2,5])
+			@board.move_anywhere([7,2],[2,6])
+			@board.move_anywhere([7,3],[2,7])
+		end
+
+		it "castles between a king and rook, given coordinates" do 
+			expect(@board.castle([7,4],[7,0])).to eq(true)
+			puts @board.format
+		end
+	end
 end

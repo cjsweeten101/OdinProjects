@@ -92,15 +92,16 @@ class Board
       	@state = update_state(@pieces_hash)
       	set_en_passant_able(moving_piece,move)
       	moving_piece.first_move = false
+      	moving_piece.moved = true
       	result = true
       else
       	result = false
     	end
-
 		elsif legal_move?(player_color, moving_piece, initial_coord, ending_coord)
 			@pieces_hash.delete(@pieces_hash.key(ending_coord)) 
 			@pieces_hash[moving_piece] = ending_coord
 			@state = update_state(@pieces_hash)
+			moving_piece.moved = true
 			result = true
 		else
 			result = false
@@ -117,8 +118,54 @@ class Board
 		@pieces_hash.key(coord)
 	end
 
-	def castle
+	def castle(king_coord, rook_coord)
+		king = get_piece(king_coord)
+		rook = get_piece(rook_coord)
+		ending_coord = []
+		hash_before = @pieces_hash
+		@pieces_hash[rook][1]+1 > 7 ? ending_coord = [@pieces_hash[rook][0], 6] : ending_coord = [@pieces_hash[rook][0], 2]
+		if castle_able?(king, rook, king_coord, ending_coord)
+			@pieces_hash[king] = ending_coord
+			rook_ending_coord = []
+			@pieces_hash[king] == [ending_coord[0], 6] ? rook_ending_coord = [ending_coord[0], 5] : rook_ending_coord = [ending_coord[0], 3]
+			@pieces_hash[rook] = rook_ending_coord
+			@state = update_state(@pieces_hash)
+			if check?(king.color)
+				@pieces_hash = hash_before
+				@state = update_state(@pieces_hash)
+				return false
+			end
+			return true
+		end
+		return false
+	end
 
+	def castle_able?(king, rook, initial_coord, ending_coord)
+		return false if check?(king.color)
+		if king.is_a?(King) && rook.is_a?(Rook) && king.moved == false && rook.moved == false
+			move = initial_coord.zip(ending_coord).map { |x, y| y - x }
+			if clear_path?(king.color, initial_coord, ending_coord, move) && no_attacked_squares(king.color, initial_coord, ending_coord, move)
+
+				return true
+			else
+				return false
+			end
+		end
+	end
+
+	def no_attacked_squares(player_color, initial_coord, ending_coord, move)
+		result = false
+		enemies_hash = @pieces_hash.select { |k, v| k.color != player_color }
+		rows = (initial_coord[0]..ending_coord[0]).to_a
+		cols = (initial_coord[1]..ending_coord[1]).to_a
+		cols = initial_coord[1].downto(ending_coord[1]).to_a if cols.length == 0
+		spaces = rows.zip(cols)
+		spaces.each do |coord|
+			enemies_hash.each do |k,v|
+				result = piece_can_traverse?(k, coord)
+			end
+		end
+		result == false ? (return true) : (return false)
 	end
 
 	def en_passant?(pawn, end_coord)
@@ -190,7 +237,7 @@ class Board
 	end
 
 	def clear_path? (player_color, initial_coord, ending_coord, move)
-		move_slice = slice_2d(@state, initial_coord, ending_coord, move)
+		move_slice = slice_2d(initial_coord, ending_coord, move)
 		move_slice.each_with_index do |space, idx|
 			if !space.nil? && idx != 0
 				return false if space.color == player_color || idx != move_slice.length-1
@@ -199,7 +246,7 @@ class Board
 		return true
 	end
 
-	def slice_2d(arr, initial_coord, ending_coord, move)
+	def slice_2d(initial_coord, ending_coord, move)
 		result = []
 		if move[0] == 0
 			indexes = (initial_coord[1]..ending_coord[1]).to_a

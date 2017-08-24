@@ -47,6 +47,14 @@ class Game
 					exit
 				elsif result.downcase == 'save'
 					save_game
+				elsif result.downcase == 'castle'
+					puts "enter kings and desired rooks coordinates"
+					until result.length == 4 do 
+						result = gets.chomp.scan(/\b[1-8]{1}\b/)
+						ending_coord = result[2..4].map {|v| v.to_i-1}
+						starting_coord = result[0..1].map {|v| v.to_i-1}
+						placed = @board.castle(starting_coord, ending_coord)
+					end
 				else		
 					result = result.scan(/\b[1-8]{1}\b/)
 				end
@@ -96,6 +104,7 @@ class Game
 
 	def game_loop
 		puts "Welcome! Type quit to quit and save to save current game"
+		puts "Also type castle to initiate a castle"
 		until @board.checkmate?(@board.player) do
 				if @board.stalemate?
 					puts "Stalemate, only kings left"
