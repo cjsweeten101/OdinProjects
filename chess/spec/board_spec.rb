@@ -27,6 +27,13 @@ describe "The game board" do
 			@board.move('b', [1,1], [2,1])
 		end 
 
+		before do 
+			@board.move_anywhere([6,1], [2,3])
+		end
+
+		it "allows pawns to capture pieces" do 
+			expect(@board.move('w', [2,3], [1,2])).to eq(true)
+		end
 		it "moves a piece to an empty space on the board"  do
 			expect(@board.state[2][1]).to be_a(Pawn)
 		end

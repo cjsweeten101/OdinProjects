@@ -9,6 +9,14 @@ class Board
 		@pieces_hash = create_pieces_hash
 		@state = update_state(@pieces_hash) 
 		@player ='b'
+		@turns = 0
+	end
+
+	#For testing purposes
+	def move_anywhere(start_coord, end_coord)
+		piece = @pieces_hash.key(start_coord)
+		@pieces_hash[piece] = end_coord
+		@state = update_state(@pieces_hash)
 	end
 
 	def format
@@ -72,6 +80,7 @@ class Board
 	end
 
 	def move player_color, initial_coord, ending_coord
+		move = initial_coord.zip(ending_coord).map { |x, y| y - x }
 		board_before_move = @state
 		hash_before_move = @pieces_hash
 		moving_piece = get_piece(initial_coord)
@@ -81,9 +90,10 @@ class Board
 				@pieces_hash.delete(@pieces_hash.key(ending_coord)) if !@pieces_hash.key(ending_coord).nil? 
       	@pieces_hash[moving_piece] = ending_coord
       	@state = update_state(@pieces_hash)
+      	set_en_passant_able(moving_piece,move)
       	moving_piece.first_move = false
       	result = true
-      else 
+      else
       	result = false
     	end
 
@@ -110,6 +120,29 @@ class Board
 	def castle
 
 	end
+
+	def en_passant?(pawn, end_coord)
+		behind_coord = []
+		pawn.color == 'b' ? behind_coord = [end_coord[0]-1, end_coord[1]] : behind_coord = [end_coord[1]+1, end_coord[1]]
+		behind_piece = @pieces_hash.key(behind_coord)
+		if !behind_piece.nil? && behind_piece.is_a?(Pawn) && behind_piece.color != pawn.color  && behind_piece.passant_able_turn == @turns
+			@pieces_hash.delete(behind_piece)
+			@state = update_state(@pieces_hash)
+			return true
+		end
+			return false
+	end
+	def set_en_passant_able(pawn, move) 
+		if move.include?(2) || move.include?(-2) 
+			pawn.passant_able_turn = @turns + 1
+		end
+	end
+
+	def switch_player
+		@player == 'b' ? @player = 'w' : @player = 'b'
+		@turns+=1
+	end
+		
 
 	def pawn_upgrade?
 		pawns_hash = @pieces_hash.select{|k,v| k.is_a?(Pawn)}
@@ -157,7 +190,7 @@ class Board
 	end
 
 	def clear_path? (player_color, initial_coord, ending_coord, move)
-		move_slice = slice_2d(@state, initial_coord, ending_coord)
+		move_slice = slice_2d(@state, initial_coord, ending_coord, move)
 		move_slice.each_with_index do |space, idx|
 			if !space.nil? && idx != 0
 				return false if space.color == player_color || idx != move_slice.length-1
@@ -166,9 +199,8 @@ class Board
 		return true
 	end
 
-	def slice_2d(arr, initial_coord, ending_coord)
+	def slice_2d(arr, initial_coord, ending_coord, move)
 		result = []
-		move = initial_coord.zip(ending_coord).map { |x, y| y - x }
 		if move[0] == 0
 			indexes = (initial_coord[1]..ending_coord[1]).to_a
 			indexes = (initial_coord[1].downto(ending_coord[1])).to_a if indexes.length == 0
@@ -225,9 +257,10 @@ class Board
 		can_move = false
     if pawn.moveset.include?(move)
 		  if move.include?(0)
-        @pieces_hash.key(ending_coord).nil? ? can_move  = true : can_move = false
+        get_piece(ending_coord).nil? ? can_move  = true : can_move = false
 		  else
-			  @pieces_hash.key(ending_coord).nil? ? can_move = false : can_move = true
+			  get_piece(ending_coord).nil? ? can_move = false : can_move = true
+			  can_move = true if en_passant?(pawn, ending_coord)
 		  end
 		end
 		can_move ? (return true) : (return false)

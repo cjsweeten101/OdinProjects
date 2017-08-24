@@ -14,13 +14,13 @@ class Knight < Piece
 end 
 
 class Pawn < Piece
-  attr_accessor :first_move
+  attr_accessor :first_move, :passant_able_turn
   
 	def initialize color='b'
 		@first_move = true
 		@color = color
 		colorfy
-		#@color == 'b' ? @moveset = [[1,0],[1,1],[1,-1]] : @moveset = [[-1,0],[-1,1][-1,-1]]
+		@pasant_able_turn = 0
 	end
 
 	def colorfy
@@ -39,7 +39,7 @@ class Pawn < Piece
       if @first_move
         moveset = [[-1,0],[-1,1],[-1,-1],[-2,0]]
       else
-        moveset = [[-1,0],[-1,1][-1,-1]]
+        moveset = [[-1,0],[-1,1],[-1,-1]]
       end
     end
     moveset

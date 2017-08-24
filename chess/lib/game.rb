@@ -105,8 +105,7 @@ class Game
 				puts "Check!" if @board.check?(@board.player)
 				puts "its #{@board.player}'s turn"
 				prompt_move(@board.player)
-				@board.player == 'b' ? @board.player = 'w' : @board.player = 'b'
-
+				@board.switch_player
 		end
 		puts "checkmate!"
 	end
