@@ -7,7 +7,11 @@ get '/' do
 	phrase = params['phrase']
 	shift = params['shift'].to_i
 	if !shift.nil? && !phrase.nil?
-		params['submit'] == "Encode" ? result = cipher(phrase, shift) : result = cipher(phrase, -1*shift) 
+		params['submit'] == "Encode" ? result = cipher(phrase, shift) : result = cipher(phrase, unshift(shift)) 
 	end
 	erb :index, :locals => {:result => result}
+end
+
+def unshift(shift)
+	26-shift
 end
