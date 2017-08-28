@@ -1,9 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel="stylesheet" href="hangman.css">
 	<title>Hangman</title>
 </head>
 <body>
-	The word is: <%= word %>
+	<div id='header'>
+		<h2>Hangman</h2>
+	</div>
+	<div id='game_info'>
+		Hint: <%= hint %> Incorrect Letters: <%= incorrect_letters %> Turns Left: <%=turns_left%>
+	</div>
+	<div id='input'>
+		Guess:
+		<form>
+			<input id='box' type="text" name="guess" maxlength="1" autofocus	="autofocus" onfocus="this.select()">
+		</form>
+	</div>
+	<div id="game_message">
+		<%= error %>
+		<% if victory %>
+			YOU WON!
+		<% elsif lost %>
+			YOU LOST!
+		<% end %>
+	</div>
+	<div id='new_game'>
+		<form method="post", action='/new_game'>
+			<button name='new_game' value="true" type="submit">New Game</button>
+		</form>
+	</div>
 </body>
 </html>
