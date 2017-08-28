@@ -1,0 +1,7 @@
+--- !ruby/object:Hangman
+dictionary: ''
+word: sniffles
+hint: s------s
+correct:
+- s
+incorrect: []
